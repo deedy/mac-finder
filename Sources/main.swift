@@ -1,6 +1,5 @@
 import SwiftUI
 import AppKit
-import UniformTypeIdentifiers
 import PDFKit
 
 @main
@@ -125,61 +124,54 @@ struct ContentView: View {
             // Run file operations in a background task
             var loadedItems: [FileItem] = []
             
-            do {
-                let url = URL(fileURLWithPath: currentPath)
-                var options: FileManager.DirectoryEnumerationOptions = [.skipsPackageDescendants, .skipsSubdirectoryDescendants]
-                
-                if !shouldShowHiddenFiles {
-                    options.insert(.skipsHiddenFiles)
-                }
-                
-                if let fileEnumerator = FileManager.default.enumerator(
-                    at: url,
-                    includingPropertiesForKeys: [
-                        .isDirectoryKey, .contentModificationDateKey, .fileSizeKey, .isHiddenKey
-                    ],
-                    options: options
-                ) {
-                    for case let fileURL as URL in fileEnumerator {
-                        do {
-                            let resourceValues = try fileURL.resourceValues(forKeys: [
-                                .isDirectoryKey, .contentModificationDateKey, .fileSizeKey, .isHiddenKey
-                            ])
-                            
-                            let isDirectory = resourceValues.isDirectory ?? false
-                            let modDate = resourceValues.contentModificationDate ?? Date.distantPast
-                            let size = Int64(resourceValues.fileSize ?? 0)
-                            let isHidden = resourceValues.isHidden ?? false
-                            
-                            // Add the item if it's not hidden or if we're showing hidden files
-                            if !isHidden || shouldShowHiddenFiles {
-                                let item = FileItem(
-                                    id: fileURL.path,
-                                    url: fileURL,
-                                    name: fileURL.lastPathComponent,
-                                    isDirectory: isDirectory,
-                                    modificationDate: modDate,
-                                    size: size,
-                                    isHidden: isHidden
-                                )
-                                loadedItems.append(item)
-                            }
-                        } catch {
-                            print("Error getting resource values: \(error)")
+            let url = URL(fileURLWithPath: currentPath)
+            var options: FileManager.DirectoryEnumerationOptions = [.skipsPackageDescendants, .skipsSubdirectoryDescendants]
+            
+            if !shouldShowHiddenFiles {
+                options.insert(.skipsHiddenFiles)
+            }
+            
+            if let fileEnumerator = FileManager.default.enumerator(
+                at: url,
+                includingPropertiesForKeys: [
+                    .isDirectoryKey, .contentModificationDateKey, .fileSizeKey, .isHiddenKey
+                ],
+                options: options
+            ) {
+                for case let fileURL as URL in fileEnumerator {
+                    do {
+                        let resourceValues = try fileURL.resourceValues(forKeys: [
+                            .isDirectoryKey, .contentModificationDateKey, .fileSizeKey, .isHiddenKey
+                        ])
+                        
+                        let isDirectory = resourceValues.isDirectory ?? false
+                        let modDate = resourceValues.contentModificationDate ?? Date.distantPast
+                        let size = Int64(resourceValues.fileSize ?? 0)
+                        let isHidden = resourceValues.isHidden ?? false
+                        
+                        // Add the item if it's not hidden or if we're showing hidden files
+                        if !isHidden || shouldShowHiddenFiles {
+                            let item = FileItem(
+                                id: fileURL.path,
+                                url: fileURL,
+                                name: fileURL.lastPathComponent,
+                                isDirectory: isDirectory,
+                                modificationDate: modDate,
+                                size: size,
+                                isHidden: isHidden
+                            )
+                            loadedItems.append(item)
                         }
+                    } catch {
+                        print("Error getting resource values: \(error)")
                     }
                 }
-                
-                // Update UI on the main thread
-                await MainActor.run {
-                    items = loadedItems.sorted(by: currentSortOrder.comparator)
-                    isLoading = false
-                }
-            } catch {
-                await MainActor.run {
-                    isLoading = false
-                }
-                print("Error loading items: \(error)")
+            }
+            
+            // Update UI on the main thread
+            await MainActor.run {
+                items = loadedItems.sorted(by: currentSortOrder.comparator)
+                isLoading = false
             }
         }
     }
@@ -319,28 +311,17 @@ struct FilePreviewView: View {
     var body: some View {
         if let selectedID = selection.first, let selectedItem = items.first(where: { $0.id == selectedID }) {
             VStack(spacing: 0) {
+                // File header
                 HStack {
-                    // File icon
-                    if selectedItem.isDirectory {
-                        Image(systemName: "folder")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.blue)
-                    } else {
-                        Image(systemName: getSystemImageName(for: selectedItem))
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.gray)
-                    }
+                    Image(systemName: getSystemImageName(for: selectedItem))
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(selectedItem.isDirectory ? .blue : .gray)
                     
-                    // File name and type
                     VStack(alignment: .leading) {
                         Text(selectedItem.name)
                             .font(.headline)
-                            .lineLimit(1)
-                        
                         Text(getFileType(for: selectedItem))
                             .font(.subheadline)
                             .foregroundColor(.secondary)
@@ -348,32 +329,44 @@ struct FilePreviewView: View {
                     
                     Spacer()
                     
-                    if !selectedItem.isDirectory {
-                        Button("Open") {
-                            NSWorkspace.shared.open(selectedItem.url)
+                    Button("Open") {
+                        NSWorkspace.shared.open(selectedItem.url)
+                    }
+                    .buttonStyle(.bordered)
+                }
+                .padding()
+                
+                Divider()
+                
+                // File metadata
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Size:")
+                            Text("Modified:")
+                            Text("Location:")
                         }
-                        .buttonStyle(.bordered)
+                        .foregroundColor(.secondary)
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(selectedItem.sizeString)
+                            Text(selectedItem.modificationDateString)
+                            Text(selectedItem.url.deletingLastPathComponent().path)
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                        }
                     }
                 }
                 .padding()
                 
                 Divider()
                 
-                ScrollView {
-                    VStack(spacing: 0) {
-                        // File metadata
-                        MetadataView(item: selectedItem)
-                            .padding()
-                        
-                        Divider()
-                        
-                        // File preview
-                        if !selectedItem.isDirectory {
-                            FileContentPreview(url: selectedItem.url)
-                                .padding()
-                        }
-                    }
+                // File preview
+                if !selectedItem.isDirectory {
+                    FileContentView(item: selectedItem)
                 }
+                
+                Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
@@ -389,28 +382,17 @@ struct FilePreviewView: View {
         
         let ext = item.url.pathExtension.lowercased()
         
-        switch ext {
-        case "pdf":
-            return "doc.text"
-        case "jpg", "jpeg", "png", "gif":
+        if ["jpg", "jpeg", "png", "gif", "tiff", "bmp", "webp"].contains(ext) {
             return "photo"
-        case "mov", "mp4", "avi":
-            return "film"
-        case "mp3", "wav", "m4a":
-            return "music.note"
-        case "zip", "gz", "tar":
-            return "archivebox"
-        case "doc", "docx":
+        } else if ext == "pdf" {
             return "doc.text"
-        case "xls", "xlsx":
-            return "chart.bar.doc.horizontal"
-        case "ppt", "pptx":
-            return "chart.bar.doc.horizontal"
-        case "app":
-            return "app.square"
-        case "txt", "md", "swift", "java", "py", "js", "html", "css":
+        } else if ["txt", "md", "swift", "java", "py", "js", "html", "css"].contains(ext) {
             return "doc.text.fill"
-        default:
+        } else if ["mp4", "mov", "avi"].contains(ext) {
+            return "film"
+        } else if ["mp3", "wav", "aac"].contains(ext) {
+            return "music.note"
+        } else {
             return "doc"
         }
     }
@@ -422,220 +404,171 @@ struct FilePreviewView: View {
         
         let ext = item.url.pathExtension.lowercased()
         
-        switch ext {
-        case "pdf":
-            return "PDF Document"
-        case "jpg", "jpeg":
+        if ["jpg", "jpeg"].contains(ext) {
             return "JPEG Image"
-        case "png":
+        } else if ext == "png" {
             return "PNG Image"
-        case "gif":
-            return "GIF Image"
-        case "mov":
-            return "QuickTime Movie"
-        case "mp4":
-            return "MP4 Video"
-        case "mp3":
-            return "MP3 Audio"
-        case "doc", "docx":
-            return "Word Document"
-        case "xls", "xlsx":
-            return "Excel Spreadsheet"
-        case "ppt", "pptx":
-            return "PowerPoint Presentation"
-        case "txt":
+        } else if ext == "pdf" {
+            return "PDF Document"
+        } else if ext == "txt" {
             return "Text File"
-        case "md":
-            return "Markdown File"
-        case "swift":
-            return "Swift Source File"
-        case "java":
-            return "Java Source File"
-        case "py":
-            return "Python Source File"
-        case "js":
-            return "JavaScript File"
-        case "html":
-            return "HTML File"
-        case "css":
-            return "CSS File"
-        case "app":
-            return "Application"
-        case "":
+        } else if ext == "" {
             return "File"
-        default:
+        } else {
             return "\(ext.uppercased()) File"
         }
     }
 }
 
-struct MetadataView: View {
+struct FileContentView: View {
     let item: FileItem
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("File Information")
-                .font(.headline)
-                .padding(.bottom, 4)
-            
-            Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 8) {
-                GridRow {
-                    Text("Size:").foregroundColor(.secondary)
-                    Text(item.sizeString)
-                }
-                GridRow {
-                    Text("Created:").foregroundColor(.secondary)
-                    Text(item.modificationDateString)
-                }
-                GridRow {
-                    Text("Location:").foregroundColor(.secondary)
-                    Text(item.url.deletingLastPathComponent().path)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                }
-                
-                if item.isHidden {
-                    GridRow {
-                        Text("Hidden:").foregroundColor(.secondary)
-                        Text("Yes")
-                    }
-                }
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
-struct FileContentPreview: View {
-    let url: URL
     @State private var textContent: String = ""
     @State private var image: NSImage? = nil
+    @State private var pdfDocument: PDFDocument? = nil
     @State private var isLoading = true
-    @State private var error: Error? = nil
+    @State private var errorMessage: String? = nil
     
     var body: some View {
-        VStack {
+        ZStack {
             if isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let error = error {
-                Text("Error loading preview: \(error.localizedDescription)")
-                    .foregroundColor(.red)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                previewContent
-            }
-        }
-        .onAppear(perform: loadPreview)
-    }
-    
-    @ViewBuilder
-    private var previewContent: some View {
-        let fileExtension = url.pathExtension.lowercased()
-        
-        // Image preview
-        if isImageFile(fileExtension) {
-            if let image = image {
-                Image(nsImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: .infinity, maxHeight: 300)
-            } else {
-                Text("Unable to load image")
-                    .foregroundColor(.red)
-            }
-        }
-        // PDF preview
-        else if fileExtension == "pdf" {
-            PDFPreviewView(url: url)
-                .frame(maxWidth: .infinity, maxHeight: 400)
-        }
-        // Text preview
-        else if isTextFile(fileExtension) {
-            ScrollView {
-                Text(textContent)
-                    .font(.system(.body, design: .monospaced))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .textSelection(.enabled)
-            }
-            .frame(maxWidth: .infinity, maxHeight: 400)
-        }
-        // Unsupported file type
-        else {
-            Text("Preview not available for this file type")
-                .foregroundColor(.secondary)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-    }
-    
-    private func loadPreview() {
-        isLoading = true
-        error = nil
-        
-        let fileExtension = url.pathExtension.lowercased()
-        
-        // Load content based on file type
-        Task {
-            do {
-                if isImageFile(fileExtension) {
-                    if let image = NSImage(contentsOf: url) {
-                        await MainActor.run {
-                            self.image = image
-                            isLoading = false
-                        }
-                    } else {
-                        throw NSError(domain: "com.explorer", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to load image"])
-                    }
-                } else if isTextFile(fileExtension) {
-                    let data = try Data(contentsOf: url)
-                    let encoding: String.Encoding = .utf8
+                ProgressView("Loading preview...")
+            } else if let errorMsg = errorMessage {
+                VStack {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.largeTitle)
+                        .foregroundColor(.orange)
+                        .padding()
                     
-                    if let content = String(data: data, encoding: encoding) {
-                        // Limit preview to first 50,000 characters for performance
-                        let limitedContent = String(content.prefix(50000))
-                        await MainActor.run {
-                            textContent = limitedContent
-                            if content.count > 50000 {
-                                textContent += "\n\n[File truncated, too large to display completely]"
-                            }
-                            isLoading = false
-                        }
-                    } else {
-                        throw NSError(domain: "com.explorer", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to decode text"])
-                    }
-                } else if fileExtension == "pdf" {
-                    // PDF preview is handled by PDFView
-                    await MainActor.run {
-                        isLoading = false
-                    }
-                } else {
-                    await MainActor.run {
-                        isLoading = false
-                    }
+                    Text("Error loading preview")
+                        .font(.headline)
+                    
+                    Text(errorMsg)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding()
                 }
-            } catch let loadError {
-                await MainActor.run {
-                    error = loadError
-                    isLoading = false
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let image = image {
+                // Image preview
+                VStack {
+                    Image(nsImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: .infinity, maxHeight: 400)
+                    
+                    Text("\(Int(image.size.width)) × \(Int(image.size.height))")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
+                .frame(maxWidth: .infinity)
+            } else if let pdfDoc = pdfDocument {
+                // PDF preview
+                PDFPreview(document: pdfDoc)
+                    .frame(maxWidth: .infinity, maxHeight: 400)
+            } else if !textContent.isEmpty {
+                // Text preview
+                ScrollView {
+                    Text(textContent)
+                        .font(.system(.body, design: .monospaced))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .textSelection(.enabled)
+                        .padding()
+                }
+            } else {
+                Text("Preview not available for this file type")
+                    .foregroundColor(.secondary)
             }
         }
+        .padding()
+        .onAppear(perform: loadContent)
     }
     
-    private func isImageFile(_ extension: String) -> Bool {
-        return ["jpg", "jpeg", "png", "gif", "tiff", "bmp", "webp"].contains(`extension`)
-    }
-    
-    private func isTextFile(_ extension: String) -> Bool {
-        return ["txt", "md", "swift", "java", "py", "js", "html", "css", "json", "xml", "c", "cpp", "h", "sh", "yaml", "yml", "toml"].contains(`extension`)
+    private func loadContent() {
+        isLoading = true
+        errorMessage = nil
+        
+        let ext = item.url.pathExtension.lowercased()
+        
+        // Run on a background thread to avoid UI freezes
+        Task {
+            // Load image files
+            if ["jpg", "jpeg", "png", "gif", "tiff", "bmp", "heic"].contains(ext) {
+                let nsImage = NSImage(contentsOf: item.url)
+                
+                await MainActor.run {
+                    if let loadedImage = nsImage {
+                        self.image = loadedImage
+                    } else {
+                        self.errorMessage = "Unable to decode image format"
+                    }
+                    self.isLoading = false
+                }
+                return
+            }
+            
+            // Load PDF files
+            if ext == "pdf" {
+                let pdfDoc = PDFDocument(url: item.url)
+                
+                await MainActor.run {
+                    if let loadedPDF = pdfDoc {
+                        self.pdfDocument = loadedPDF
+                    } else {
+                        self.errorMessage = "Unable to load PDF document"
+                    }
+                    self.isLoading = false
+                }
+                return
+            }
+            
+            // Load text files
+            let textExtensions = ["txt", "md", "swift", "java", "py", "js", "html", "css", 
+                                 "json", "xml", "c", "cpp", "h", "sh", "yaml", "yml", 
+                                 "config", "ini", "gitignore", "properties", "log"]
+            
+            if textExtensions.contains(ext) {
+                do {
+                    let data = try Data(contentsOf: item.url)
+                    if let content = String(data: data, encoding: .utf8) {
+                        // Limit text preview to avoid performance issues
+                        let limitedContent = content.count > 20000 
+                            ? String(content.prefix(20000)) + "\n\n[Content truncated...]" 
+                            : content
+                        
+                        await MainActor.run {
+                            self.textContent = limitedContent
+                            self.isLoading = false
+                        }
+                    } else {
+                        await MainActor.run {
+                            self.errorMessage = "Unable to decode text with UTF-8 encoding"
+                            self.isLoading = false
+                        }
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.errorMessage = error.localizedDescription
+                        self.isLoading = false
+                    }
+                }
+                return
+            }
+            
+            // No preview available for other file types
+            await MainActor.run {
+                self.isLoading = false
+            }
+        }
     }
 }
 
-struct PDFPreviewView: NSViewRepresentable {
-    let url: URL
+struct PDFPreview: NSViewRepresentable {
+    let document: PDFDocument
     
     func makeNSView(context: Context) -> PDFView {
         let pdfView = PDFView()
+        pdfView.document = document
         pdfView.autoScales = true
         pdfView.displayMode = .singlePage
         pdfView.displayDirection = .vertical
@@ -643,9 +576,7 @@ struct PDFPreviewView: NSViewRepresentable {
     }
     
     func updateNSView(_ nsView: PDFView, context: Context) {
-        if let pdfDocument = PDFDocument(url: url) {
-            nsView.document = pdfDocument
-        }
+        nsView.document = document
     }
 }
 

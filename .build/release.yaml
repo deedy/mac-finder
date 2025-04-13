@@ -1,0 +1,66 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "Explorer-arm64-apple-macosx15.0-release.exe": ["<Explorer-arm64-apple-macosx15.0-release.exe>"]
+  "Explorer-arm64-apple-macosx15.0-release.module": ["<Explorer-arm64-apple-macosx15.0-release.module>"]
+  "PackageStructure": ["<PackageStructure>"]
+  "main": ["<Explorer-arm64-apple-macosx15.0-release.exe>","<Explorer-arm64-apple-macosx15.0-release.module>"]
+  "test": ["<Explorer-arm64-apple-macosx15.0-release.exe>","<Explorer-arm64-apple-macosx15.0-release.module>"]
+default: "main"
+nodes:
+  "/Users/debarghya/dev/playground/explorer/Sources/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/debarghya/dev/playground/explorer/Sources/main.swift"]
+    outputs: ["/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/sources"]
+    description: "Write auxiliary file /Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/sources"
+
+  "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.product/Objects.LinkFileList":
+    tool: write-auxiliary-file
+    inputs: ["<link-file-list>","/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/main.swift.o"]
+    outputs: ["/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.product/Objects.LinkFileList"]
+    description: "Write auxiliary file /Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.product/Objects.LinkFileList"
+
+  "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/Library/Developer/CommandLineTools/usr/bin/swiftc"]
+    outputs: ["/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"
+
+  "<Explorer-arm64-apple-macosx15.0-release.exe>":
+    tool: phony
+    inputs: ["/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer"]
+    outputs: ["<Explorer-arm64-apple-macosx15.0-release.exe>"]
+
+  "<Explorer-arm64-apple-macosx15.0-release.module>":
+    tool: phony
+    inputs: ["/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/main.swift.o","/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Modules/Explorer.swiftmodule"]
+    outputs: ["<Explorer-arm64-apple-macosx15.0-release.module>"]
+
+  "C.Explorer-arm64-apple-macosx15.0-release.exe":
+    tool: shell
+    inputs: ["/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/main.swift.o","/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.product/Objects.LinkFileList"]
+    outputs: ["/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer"]
+    description: "Linking ./.build/arm64-apple-macosx/release/Explorer"
+    args: ["/Library/Developer/CommandLineTools/usr/bin/swiftc","-L","/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release","-o","/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer","-module-name","Explorer","-Xlinker","-no_warn_duplicate_libraries","-emit-executable","-Xlinker","-dead_strip","-Xlinker","-alias","-Xlinker","_Explorer_main","-Xlinker","_main","-Xlinker","-rpath","-Xlinker","@loader_path","@/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.product/Objects.LinkFileList","-target","arm64-apple-macosx13.0","-F","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-sdk","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-g","-Xlinker","-rpath","-Xlinker","/Library/Developer/CommandLineTools/Library/Developer/Frameworks"]
+
+  "C.Explorer-arm64-apple-macosx15.0-release.module":
+    tool: shell
+    inputs: ["/Users/debarghya/dev/playground/explorer/Sources/main.swift","/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt","/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/sources"]
+    outputs: ["/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/main.swift.o","/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Modules/Explorer.swiftmodule"]
+    description: "Compiling Swift Module 'Explorer' (1 sources)"
+    args: ["/Library/Developer/CommandLineTools/usr/bin/swiftc","-module-name","Explorer","-emit-dependencies","-emit-module","-emit-module-path","/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Modules/Explorer.swiftmodule","-output-file-map","/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/output-file-map.json","-whole-module-optimization","-num-threads","8","-c","@/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/sources","-I","/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Modules","-target","arm64-apple-macosx13.0","-O","-j8","-DSWIFT_PACKAGE","-module-cache-path","/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/ModuleCache","-parseable-output","-Xfrontend","-entry-point-function-name","-Xfrontend","Explorer_main","-parse-as-library","-swift-version","5","-F","/Library/Developer/CommandLineTools/Library/Developer/Frameworks","-sdk","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-g","-Xcc","-isysroot","-Xcc","/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk","-Xcc","-fPIC","-Xcc","-g","-package-name","explorer"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/debarghya/dev/playground/explorer/Sources/","/Users/debarghya/dev/playground/explorer/Package.swift","/Users/debarghya/dev/playground/explorer/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

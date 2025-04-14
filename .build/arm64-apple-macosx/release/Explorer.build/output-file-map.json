@@ -1,12 +1,12 @@
 {
   "": {
-    "dependencies": "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/Explorer.d",
-    "object": "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/Explorer.o",
-    "swift-dependencies": "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/master.swiftdeps"
+    "dependencies": "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/Explorer.d",
+    "object": "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/Explorer.o",
+    "swift-dependencies": "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/master.swiftdeps"
   },
-  "/Users/debarghya/dev/playground/explorer/Sources/main.swift": {
-    "object": "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/main.swift.o",
-    "swiftmodule": "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/main~partial.swiftmodule",
-    "swift-dependencies": "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/main.swiftdeps"
+  "/Users/mayank/mac-finder/Sources/main.swift": {
+    "object": "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/main.swift.o",
+    "swiftmodule": "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/main~partial.swiftmodule",
+    "swift-dependencies": "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/main.swiftdeps"
   }
 }

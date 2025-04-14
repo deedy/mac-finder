@@ -19,27 +19,27 @@
   "swiftCommands" : {
     "C.Explorer-arm64-apple-macosx15.0-release.module" : {
       "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
-      "fileList" : "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/sources",
-      "importPath" : "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Modules",
+      "fileList" : "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/sources",
+      "importPath" : "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Modules",
       "inputs" : [
         {
           "kind" : "file",
-          "name" : "/Users/debarghya/dev/playground/explorer/Sources/main.swift"
+          "name" : "/Users/mayank/mac-finder/Sources/main.swift"
         },
         {
           "kind" : "file",
-          "name" : "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"
+          "name" : "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"
         },
         {
           "kind" : "file",
-          "name" : "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/sources"
+          "name" : "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/sources"
         }
       ],
       "isLibrary" : false,
       "moduleName" : "Explorer",
-      "moduleOutputPath" : "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Modules/Explorer.swiftmodule",
+      "moduleOutputPath" : "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Modules/Explorer.swiftmodule",
       "objects" : [
-        "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/main.swift.o"
+        "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/main.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -48,13 +48,14 @@
         "-j8",
         "-DSWIFT_PACKAGE",
         "-module-cache-path",
-        "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/ModuleCache",
+        "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/ModuleCache",
         "-parseable-output",
         "-Xfrontend",
         "-entry-point-function-name",
         "-Xfrontend",
         "Explorer_main",
         "-parse-as-library",
+        "-color-diagnostics",
         "-swift-version",
         "5",
         "-F",
@@ -71,24 +72,24 @@
         "-Xcc",
         "-g",
         "-package-name",
-        "explorer"
+        "mac_finder"
       ],
-      "outputFileMapPath" : "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/output-file-map.json",
+      "outputFileMapPath" : "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/output-file-map.json",
       "outputs" : [
         {
           "kind" : "file",
-          "name" : "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/main.swift.o"
+          "name" : "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/main.swift.o"
         },
         {
           "kind" : "file",
-          "name" : "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Modules/Explorer.swiftmodule"
+          "name" : "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Modules/Explorer.swiftmodule"
         }
       ],
       "prepareForIndexing" : false,
       "sources" : [
-        "/Users/debarghya/dev/playground/explorer/Sources/main.swift"
+        "/Users/mayank/mac-finder/Sources/main.swift"
       ],
-      "tempsPath" : "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build",
+      "tempsPath" : "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build",
       "wholeModuleOptimization" : true
     }
   },
@@ -101,27 +102,28 @@
       "-module-name",
       "Explorer",
       "-package-name",
-      "explorer",
+      "mac_finder",
       "-whole-module-optimization",
       "-num-threads",
       "8",
       "-c",
-      "/Users/debarghya/dev/playground/explorer/Sources/main.swift",
+      "/Users/mayank/mac-finder/Sources/main.swift",
       "-I",
-      "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Modules",
+      "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Modules",
       "-target",
       "arm64-apple-macosx13.0",
       "-O",
       "-j8",
       "-DSWIFT_PACKAGE",
       "-module-cache-path",
-      "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/ModuleCache",
+      "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/ModuleCache",
       "-parseable-output",
       "-Xfrontend",
       "-entry-point-function-name",
       "-Xfrontend",
       "Explorer_main",
       "-parse-as-library",
+      "-color-diagnostics",
       "-swift-version",
       "5",
       "-F",
@@ -138,7 +140,7 @@
       "-Xcc",
       "-g",
       "-package-name",
-      "explorer",
+      "mac_finder",
       "-driver-use-frontend-path",
       "/Library/Developer/CommandLineTools/usr/bin/swiftc"
     ]
@@ -155,7 +157,7 @@
 
   },
   "writeCommands" : {
-    "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/sources" : {
+    "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/sources" : {
       "alwaysOutOfDate" : false,
       "inputs" : [
         {
@@ -164,12 +166,12 @@
         },
         {
           "kind" : "file",
-          "name" : "/Users/debarghya/dev/playground/explorer/Sources/main.swift"
+          "name" : "/Users/mayank/mac-finder/Sources/main.swift"
         }
       ],
-      "outputFilePath" : "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/sources"
+      "outputFilePath" : "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/sources"
     },
-    "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.product/Objects.LinkFileList" : {
+    "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.product/Objects.LinkFileList" : {
       "alwaysOutOfDate" : false,
       "inputs" : [
         {
@@ -178,12 +180,12 @@
         },
         {
           "kind" : "file",
-          "name" : "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.build/main.swift.o"
+          "name" : "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.build/main.swift.o"
         }
       ],
-      "outputFilePath" : "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/Explorer.product/Objects.LinkFileList"
+      "outputFilePath" : "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/Explorer.product/Objects.LinkFileList"
     },
-    "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt" : {
+    "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt" : {
       "alwaysOutOfDate" : true,
       "inputs" : [
         {
@@ -195,7 +197,7 @@
           "name" : "/Library/Developer/CommandLineTools/usr/bin/swiftc"
         }
       ],
-      "outputFilePath" : "/Users/debarghya/dev/playground/explorer/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"
+      "outputFilePath" : "/Users/mayank/mac-finder/.build/arm64-apple-macosx/release/swift-version--1AB21518FC5DEDBE.txt"
     }
   }
 }
